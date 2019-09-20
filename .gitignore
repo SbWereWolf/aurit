@@ -1,8 +1,7 @@
 /db/test_db.FDB
-/plugins/techsupport.dll
-/plugins/techsupport.dproj.local
-/plugins/techsupport.identcache
-/plugins/techsupport.otares
-/plugins/techsupport.dll
+/plugins/*.dll
+/plugins/*.dproj.local
+/plugins/*.identcache
+/plugins/*.otares
 /plugins/__history/**
 /plugins/*.dcu
