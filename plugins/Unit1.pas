@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Data.DB,
   FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, Vcl.Grids, Vcl.DBGrids,
   FIBQuery, pFIBQuery, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.ValEdit, Vcl.Menus,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList,FIBDBLoginDlg;
 
 type
   TPluginForm = class(TForm)

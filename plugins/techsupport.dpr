@@ -94,9 +94,9 @@ end;
 exports
    LoadPlugin,
    InitPlugin,
-   GetLibraryName
+   GetLibraryName,
    TechSupport1,
-   UnLoad;
+   PluginDLLProc;
 
 begin
   DLLProc := @PluginDLLProc;
