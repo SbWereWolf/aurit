@@ -1,0 +1,52 @@
+select * from ( select '350' kod_mo, 'ГБУЗ СО СОКБ №1'name_mo
+--,p.med_form
+,REPLACE(REPLACE(REPLACE
+  (REPLACE(REPLACE(REPLACE
+    (REPLACE(REPLACE(REPLACE
+      (REPLACE(REPLACE(REPLACE
+        (REPLACE(REPLACE(REPLACE
+          (REPLACE(REPLACE(REPLACE
+            (REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(p.med_form, 'амп', 'ампулы'), 'р-ль', 'растворитель'),
+              'т/с', 'темного стекла'), 'па-к', 'пачки картонные'), 'уп-ки', 'упаковки'), 'р-р', 'раствор'), 'п/', 'покрытые '), 'пленоч.', 'пленочной '), 'плен.', 'пленочной ')
+            , 'уп.', 'упаковки '), 'упак.', 'упаковки '), ' п-к ', ' подкожного ')
+            , 'инф.', 'инфузий '), 'лек.', 'лекарственных '), 'инф ', 'инфузий '), 'в/артер.', 'внутриартериального ')
+            , 'в/м', 'внутримышечного'), 'в/в', 'внутривенного'), 'приготовл.', 'приготовления '), 'я/к', 'ячейковые контурные'), 'приг.', 'приготовления '), 'р-ра', 'раствора')
+            , 'пригот.', 'приготовления '), 'д/', 'для ') med_form_o
+,p.med_doz
+,p.name_prep
+,cs3.name_cs3 mn
+,max(case when pd.id_oper in (11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29) then cs1.name_cs1 else '' end)  ist_finans
+,p.id_prep
+,a.artikul                           
+,p.razb_izmer kol_v_upak
+,a.name_provider name_provider
+,a.cena_gr cena_gr,
+a.cena_izg cena_izg                                         
+,p.name_prep   torg_name_ls
+,p.code3      nom_reg_udost
+,f.name_firm name_firm                                                 
+,max(case when pd.id_oper in (11,12,13,14,15,16,17,18,19) then d.rem_doc else '' end)    usl_ok_med_pom
+, max(case when pd.id_oper in (11,12,13,14,15,16,17,18,19) then d.num_doc else '' end) num
+, max(case when pd.id_oper in (11,12,13,14,15,16,17,18,19) then d.date_doc else '' end) dat                                          
+, a.cena_opt_nds
+, s.certif_reg_num
+, d.rem_doc                                  
+, sum(case when pd.id_oper in (11,12,13,14,15,16,17,18,19)  then pd.sum_opt_nds else 0 end) suma
+, sum(case when pd.id_oper in (11,12,13,14,15,16,17,18,19) then pd.kol_all/a.kol_razb else 0 end) prihod
+, sum(case when pd.id_oper in (20,21,22,23,24,25,26,27,28,29) then pd.kol_all/a.kol_razb else 0 end) rashod
+from prep p left join artikul a on a.id_prep=p.id_prep
+            left join posdoc pd on pd.artikul=a.artikul
+            left join doc d on pd.id_doc=d.id_doc
+            left join custom_sprav3 cs3 on p.id_cs3=cs3.id_cs3
+            left join custom_sprav1 cs1 on d.id_cs1=cs1.id_cs1
+            left join firm f on a.id_firm = f.id_firm
+            left join series s on a.artikul = s.artikul                                                                                                                                    
+where
+d.date_doc between :date1 and :date2
+--and p.id_farmgroup<>126
+group by p.med_form,p.med_doz,p.name_prep, cs3.name_cs3
+,p.id_prep,
+--a.num_doc_reestr,a.date_doc_reestr,
+a.cena_opt_nds,a.name_provider,f.name_firm,d.rem_doc,p.name_lat,p.code3,p.razb_izmer,a.artikul, a.cena_izg, a.cena_gr, s.certif_reg_num                                                                      
+) z
+where z.prihod<>0 or z.rashod>0
