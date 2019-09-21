@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Data.DB,
   FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, Vcl.Grids, Vcl.DBGrids,
   FIBQuery, pFIBQuery, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.ValEdit, Vcl.Menus,
-  System.Actions, Vcl.ActnList,FIBDBLoginDlg;
+  System.Actions, Vcl.ActnList,FIBDBLoginDlg,
+  IOUtils;
 
 type
   TPluginForm = class(TForm)
@@ -52,6 +53,10 @@ type
     PopupMenuGrid: TPopupMenu;
     N2: TMenuItem;
     Timer1: TTimer;
+    ReportPeriodBegin: TDateTimePicker;
+    ReportPeriodEnd: TDateTimePicker;
+    Label1: TLabel;
+    doReporting: TButton;
     procedure FormShow(Sender: TObject);
     procedure btnRemainsClick(Sender: TObject);
     procedure btnExecClick(Sender: TObject);
@@ -63,12 +68,14 @@ type
     procedure CloseTimerTimer(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure doReportingClick(Sender: TObject);
   private
     fmPlugins : TForm;
     { Private declarations }
     procedure ConnectDb;
     procedure LoadList;
     procedure SelectQuery(id : integer);
+    function GetDate(var control: TDateTimePicker): string;
   public
     { Public declarations }
     procedure OnAppRestore(Sender: TObject);
@@ -79,6 +86,12 @@ var
 
   TS_databasePath : string;
   TS_gdsLibrary   : string;
+
+  QueryText: string;
+
+const
+  QueryTextSource = 'current_remains_report.sql';
+  ShortDateFormat = 'dd.MM.yyyy';
 
 implementation
 {$R *.dfm}
@@ -205,6 +218,51 @@ begin
    cbListChange(cbList);
 end;
 
+procedure TPluginForm.doReportingClick(Sender: TObject);
+var
+  endDate: TDateTime;
+  i : integer;
+  mayDo : boolean;
+
+  beginAsString : string;
+  endAsString : string;
+
+begin
+
+  Screen.Cursor := crHourGlass;
+  LabelBusy.Visible := true;
+  Invalidate;
+  Application.ProcessMessages;
+
+  mayDo := Length(QueryText) <> 0;
+  if( mayDo and qSelect.Active )
+  then
+  begin
+    qSelect.Close;
+  end;
+
+  beginAsString := GetDate(ReportPeriodBegin);
+  endAsString := GetDate(ReportPeriodEnd);
+
+  if(mayDo)
+  then
+  begin
+    try
+      qSelect.SQLs.SelectSQL.Text := QueryText;
+      qSelect.Prepare;
+      qSelect.ParamByName('dateBegin').AsString := beginAsString;
+      qSelect.ParamByName('dateEnd').AsString := endAsString;
+      qSelect.Open;
+      StatusBar.SimpleText := 'строк: ' + IntToStr(qSelect.RecordCountFromSrv);
+    finally
+    end;
+  end;
+
+  Screen.Cursor := crDefault;
+  LabelBusy.Visible := false;
+
+end;
+
 procedure TPluginForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
    Timer1.Enabled := false;
@@ -213,10 +271,28 @@ begin
 end;
 
 procedure TPluginForm.FormCreate(Sender: TObject);
+var
+  isQueryFileExists: boolean;
+  queryFile : TextFile;
+  directory : string;
+  path : string;
 begin
    fmPlugins := nil;
    db.DatabaseName := TS_databasePath;
    db.LibraryName := TS_gdsLibrary;
+
+  directory := ExtractFilePath(GetModuleName(HInstance));
+  path := directory + QueryTextSource;
+  isQueryFileExists := FileExists(path);
+  if(isQueryFileExists)
+  then
+  begin
+    QueryText := IOUtils.TFile.ReadAllText(path);
+  end
+  else
+  begin
+    QueryText := '';
+  end;
 end;
 
 procedure TPluginForm.FormShow(Sender: TObject);
@@ -261,6 +337,17 @@ end;
 procedure TPluginForm.OnAppRestore(Sender: TObject);
 begin
    BringToFront;
+end;
+
+function  TPluginForm.GetDate(var control: TDateTimePicker):string;
+var
+  dateValue: TDateTime;
+  date : string;
+begin
+  dateValue := control.DateTime;
+  DateTimeToString(date, ShortDateFormat, dateValue);
+
+  Result := date;
 end;
 
 procedure TPluginForm.SelectQuery(id: integer);

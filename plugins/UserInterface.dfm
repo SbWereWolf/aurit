@@ -1,8 +1,8 @@
 ﻿object PluginForm: TPluginForm
   Left = 0
   Top = 0
-  Caption = #1059#1090#1080#1083#1080#1090#1099' '#1090#1077#1093#1087#1086#1076#1076#1077#1088#1078#1082#1080
-  ClientHeight = 450
+  Caption = #1054#1090#1095#1105#1090' '#1086' '#1090#1077#1082#1091#1097#1080#1093' '#1086#1089#1090#1072#1090#1082#1072#1093
+  ClientHeight = 547
   ClientWidth = 526
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@
     Left = 0
     Top = 0
     Width = 526
-    Height = 431
+    Height = 528
     ActivePage = TabQueries
     Align = alClient
     TabOrder = 0
@@ -29,7 +29,7 @@
       Caption = #1047#1072#1087#1088#1086#1089#1099
       object Splitter1: TSplitter
         Left = 0
-        Top = 214
+        Top = 311
         Width = 518
         Height = 3
         Cursor = crVSplit
@@ -41,15 +41,22 @@
         Left = 0
         Top = 0
         Width = 518
-        Height = 41
+        Height = 161
         Align = alTop
         TabOrder = 0
         DesignSize = (
           518
-          41)
+          161)
+        object Label1: TLabel
+          Left = 8
+          Top = 8
+          Width = 193
+          Height = 13
+          Caption = #1054#1090#1095#1105#1090' '#1086' '#1090#1077#1082#1091#1097#1080#1093' '#1086#1089#1090#1072#1090#1082#1072#1093' '#1079#1072' '#1087#1077#1088#1080#1086#1076
+        end
         object cbList: TComboBox
           Left = 8
-          Top = 14
+          Top = 112
           Width = 502
           Height = 21
           Style = csDropDownList
@@ -57,12 +64,39 @@
           TabOrder = 0
           OnChange = cbListChange
         end
+        object ReportPeriodBegin: TDateTimePicker
+          Left = 8
+          Top = 27
+          Width = 186
+          Height = 21
+          Date = 43729.546092673610000000
+          Time = 43729.546092673610000000
+          TabOrder = 1
+        end
+        object ReportPeriodEnd: TDateTimePicker
+          Left = 8
+          Top = 54
+          Width = 186
+          Height = 21
+          Date = 43729.546092673610000000
+          Time = 43729.546092673610000000
+          TabOrder = 2
+        end
+        object doReporting: TButton
+          Left = 8
+          Top = 81
+          Width = 114
+          Height = 25
+          Caption = #1057#1092#1086#1088#1084#1080#1088#1086#1074#1072#1090#1100
+          TabOrder = 3
+          OnClick = doReportingClick
+        end
       end
       object PanelQuery: TPanel
         Left = 0
-        Top = 41
+        Top = 161
         Width = 518
-        Height = 173
+        Height = 150
         Align = alClient
         Constraints.MinHeight = 150
         Constraints.MinWidth = 300
@@ -71,7 +105,7 @@
           Left = 1
           Top = 1
           Width = 516
-          Height = 136
+          Height = 113
           Align = alClient
           Font.Charset = RUSSIAN_CHARSET
           Font.Color = clWindowText
@@ -82,16 +116,14 @@
           PopupMenu = PopupMenuQuery
           ScrollBars = ssBoth
           TabOrder = 0
-          ExplicitTop = 0
         end
         object PanelButtons: TPanel
           Left = 1
-          Top = 137
+          Top = 114
           Width = 516
           Height = 35
           Align = alBottom
           TabOrder = 1
-          ExplicitTop = 136
           object LabelBusy: TLabel
             Left = 160
             Top = 6
@@ -108,7 +140,7 @@
           end
           object btnSelect: TButton
             Left = 7
-            Top = 5
+            Top = 6
             Width = 114
             Height = 25
             Caption = #1042#1099#1073#1086#1088#1082#1072
@@ -128,7 +160,7 @@
       end
       object PanelResult: TPanel
         Left = 0
-        Top = 217
+        Top = 314
         Width = 518
         Height = 186
         Align = alBottom
@@ -166,8 +198,6 @@
           Height = 184
           Align = alLeft
           TabOrder = 1
-          ExplicitLeft = -2
-          ExplicitTop = 0
           ColWidths = (
             68
             102)
@@ -177,7 +207,7 @@
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 431
+    Top = 528
     Width = 526
     Height = 19
     Panels = <>
@@ -187,19 +217,21 @@
     DBName = 'c:\db\database.gdb'
     DBParams.Strings = (
       'user_name=SYSDBA'
-      'lc_ctype=WIN1251')
+      'lc_ctype=WIN1251'
+      'password=masterkey'
+      'sql_role_name=')
     DefaultTransaction = trans
     SQLDialect = 3
     Timeout = 0
     UseLoginPrompt = True
     WaitForRestoreConnect = 0
-    Left = 16
-    Top = 368
+    Left = 216
+    Top = 40
   end
   object trans: TpFIBTransaction
     DefaultDatabase = db
-    Left = 72
-    Top = 376
+    Left = 256
+    Top = 40
   end
   object qDeparts: TpFIBDataSet
     SelectSQL.Strings = (
@@ -214,8 +246,8 @@
       'group by 1, 2')
     Transaction = trans
     Database = db
-    Left = 136
-    Top = 368
+    Left = 264
+    Top = 88
     object qDepartsID_DEPART: TFIBIntegerField
       FieldName = 'ID_DEPART'
     end
@@ -237,8 +269,8 @@
       ' 1, '#39'?'#39' from RDB$DATABASE ')
     Transaction = trans
     Database = db
-    Left = 276
-    Top = 360
+    Left = 428
+    Top = 40
     object qTech_SUPPORTID_QUERY: TFIBIntegerField
       FieldName = 'ID_QUERY'
     end
@@ -263,47 +295,47 @@
   end
   object dsDeparts: TDataSource
     DataSet = qDeparts
-    Left = 188
-    Top = 376
+    Left = 212
+    Top = 88
   end
   object dsTech_Support: TDataSource
     DataSet = qTech_SUPPORT
     Left = 340
-    Top = 376
+    Top = 40
   end
   object qExec: TpFIBQuery
     Transaction = trans
     Database = db
-    Left = 476
-    Top = 312
+    Left = 340
+    Top = 168
   end
   object qSelect: TpFIBDataSet
     Transaction = trans
     Database = db
-    Left = 412
-    Top = 312
+    Left = 428
+    Top = 88
   end
   object dsSelect: TDataSource
     DataSet = qSelect
-    Left = 420
-    Top = 376
+    Left = 340
+    Top = 88
   end
   object q1: TpFIBDataSet
     Transaction = trans
     Database = db
-    Left = 476
-    Top = 376
+    Left = 428
+    Top = 168
   end
   object PopupMenuQuery: TPopupMenu
-    Left = 100
-    Top = 113
+    Left = 228
+    Top = 169
     object N1: TMenuItem
       Action = Action1
     end
   end
   object ActionList1: TActionList
-    Left = 212
-    Top = 81
+    Left = 156
+    Top = 169
     object Action1: TAction
       Caption = #1042#1099#1087#1086#1083#1085#1080#1090#1100
       ShortCut = 120
@@ -311,8 +343,8 @@
     end
   end
   object PopupMenuGrid: TPopupMenu
-    Left = 220
-    Top = 311
+    Left = 36
+    Top = 167
     object N2: TMenuItem
       Caption = #1057#1078#1072#1090#1100' '#1082#1086#1083#1086#1085#1082#1091
       OnClick = N2Click
@@ -321,7 +353,7 @@
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Left = 324
-    Top = 113
+    Left = 100
+    Top = 169
   end
 end
