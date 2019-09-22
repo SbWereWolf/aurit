@@ -7,7 +7,8 @@ uses
   System.AnsiStrings,
   Vcl.Forms,
   windows,
-  UserInterface in 'UserInterface.pas' {PluginForm};
+  UserInterface in 'UserInterface.pas' {PluginForm},
+  RemainsRecord in 'RemainsRecord.pas';
 
 {$R *.res}
 var
